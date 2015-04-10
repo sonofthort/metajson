@@ -1,5 +1,5 @@
 # metajson
-Referenceable data and C-like macros in pure JSON. Also can reference/invoke language level functions.
+Referenceable data and C-like macros in pure JSON. Also can reference/invoke functions.
 
 # Languages
 Currently only a JavaScript implementation.
