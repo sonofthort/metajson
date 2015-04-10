@@ -13,50 +13,38 @@ metajson.eval({
 	// Optional data section.
 	// Elements can be referenced anywhere else by their key.
 	"data": {
-		"d1": "x",
-		"d2": 3.14159
+		"pi": 3.14159,
+		"tau": 6.28318
 	},
 	// Optional templates section.
 	// Special strings "__1", "__2", "__3", and so on are placeholders and will be replaced
 	// with the arguments passed to the template when invoked.
 	"templates": {
-		"t1": {
+		"proclaim": {
 			"__1": "__2",
-			// "d1" and "d2" are found in the "data" section, and are replaced with the cooresponding values.
-			"d1": "d2"	
+			"reason": "__3"
 		}
 	},
 	// Required "result" value. This is what is evaluated to procude the result.
-	"result": {
+	"result": [
 		// Invoke a template by making its name the first element of an array.
 		// The remaining elements are the arguments to the template.
-		"foo": ["t1",
-			"hello", "world"
-		],
-		"bar": ["t1",
-			"goodbye", "cruel world"
-		]
-	}
+		["proclaim", "bad", "pi", "edible"],
+		["proclaim", "good", "tau", "non-edible"]
+	]
 })
-
 ~~~
 
 This will return...
 
 ~~~
-{
-	"foo": {
-		"hello": "world",
-		"x": 3.14159
-	},
-	"bar": {
-		"goodbye": "cruel world",
-		"x": 3.14159
-	}
-}
+[
+	{"bad": 3.14159, "reason": "edible"},
+	{"good": 6.28318, "reason": "non-edible"}
+]
 ~~~
 
-metajson.eval can also receive a dictionary, allowing a metajson object to refer to some predefined values. A dictionary can also contain actual functions, which can be invoked the same way as templates.
+metajson.eval can also receive a dictionary, allowing a metajson object to refer to some predefined values. A dictionary can also contain actual functions, which can be invoked the same way as templates. Dictionaries offer a simple way to "extend" metajson.
 
 ~~~
 metajson.eval({
@@ -76,9 +64,10 @@ Can you guess what this returns? (Scroll to bottom to see result)
 # TODO
 Feature | Notes
 ------------- | -------------
-General testing | I have tried a very limited number of cases and there is not a unit test yet. I imagine there are some clever recursive scenarios that could make this explode, if not just because of infinite looping.
+General testing | I imagine there are some clever recursive scenarios that could make this explode, if not just because of infinite looping.
 General code improvements | Please provide feedback on anything you think could be improved! I do not claim to be a JavaScript expert.
-Argument pack expansion | forward template/function argument packs using a syntax something like "..", "..1", "..2" (the numbered versions forward beginning at Nth argument)
+Variadic support | forward template/function argument packs using a syntax something like ".." (all), "2.." (all from 2nd upto last), "..3" (all from 1st to 3rd) "2..4" (2nd, 3rd, and 4th)
+Don't go too crazy with features | confirm that sought after feature cannot be implemented easily with a dictionary
 
 # Answers
 It returns (1 + 2) * (5 - 3), which equals 6

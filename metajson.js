@@ -1,4 +1,6 @@
-﻿// Developed by Eric Thortsen
+﻿'use stict';
+
+// Created by Eric Thortsen
 // see https://github.com/sonofthort/metajson for liscense and documentation
 
 metajson = {}
