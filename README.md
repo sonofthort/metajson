@@ -27,7 +27,7 @@ metajson.eval({
 	},
 	// Required "result" value. This is what is evaluated to procude the result.
 	"result": [
-		// Invoke a template by making its name the first element of an array.
+		// Invoke a template by using its name as the first element of an array.
 		// The remaining elements are the arguments to the template.
 		["proclaim", "bad", "pi", "edible"],
 		["proclaim", "good", "tau", "non-edible"]
