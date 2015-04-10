@@ -77,3 +77,9 @@ Can you guess what this returns?
 
 It returns (1 + 2) * (5 - 3), which equals 6
 
+# TODO
+Feature | Notes
+------------- | -------------
+Argument pack expansion | forward template/function argument packs using a syntax something like "..", "..1", "..2" (the numbered versions forward beginning at Nth argument)
+Infinite loop detection | This should happen at some point
+General improvements | Please provide feedback on anything you think could be improved! I do not claim to be a JavaScript expert.
