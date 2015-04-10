@@ -6,7 +6,7 @@ Currently only a JavaScript implementation.
 
 # Examples
 
-One main objective of metajson is reducing duplication.  
+One main objective of metajson is reducing duplication. This may not be a visual example of reduced size, but demonstrates the reuse concepts and metajson structure.
 
 ~~~
 metajson.eval({
@@ -56,7 +56,7 @@ This will return...
 }
 ~~~
 
-metajson.eval can also receive a dictionary allowing a metajson object to refer to some predefined values. A dictionary can also contain actual functions, which can be invoked the same same as templates.
+metajson.eval can also receive a dictionary, allowing a metajson object to refer to some predefined values. A dictionary can also contain actual functions, which can be invoked the same way as templates.
 
 ~~~
 metajson.eval({
