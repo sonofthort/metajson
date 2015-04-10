@@ -40,10 +40,10 @@ metajson.util.copyObject = function(obj) {
 metajson.eval = function(obj, dictionary /*optional*/) {
 	var util = metajson.util
 
-	util.assert(obj instanceof Object, 'obj must be an Object')
+	util.assert(util.isObject(obj), 'obj must be an Object')
 	util.assert(obj.result != null, 'obj.result is null or undefined')
-	util.assert(obj.data instanceof Object || obj.data == null, 'obj.data must be null or an Object')
-	util.assert(obj.templates instanceof Object || obj.templates == null, 'obj.templates must be null or an Object')
+	util.assert(util.isObject(obj.data) || obj.data == null, 'obj.data must be null or an Object')
+	util.assert(util.isObject(obj.templates) || obj.templates == null, 'obj.templates must be null or an Object')
 	
 	dictionary = dictionary || {}
 	
