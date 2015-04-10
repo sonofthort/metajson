@@ -17,8 +17,8 @@ metajson.eval({
 		"tau": 6.28318
 	},
 	// Optional templates section.
-	// Special strings "__1", "__2", "__3", and so on are placeholders and will be replaced
-	// with the arguments passed to the template when invoked.
+	// Special strings "__1", "__2", "__3", and so on are placeholders and will
+	// be replaced with the arguments passed to the template when invoked.
 	"templates": {
 		"proclaim": {
 			"__1": "__2",
