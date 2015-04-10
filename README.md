@@ -65,9 +65,9 @@ Can you guess what this returns? (Scroll to bottom to see result)
 Feature | Notes
 ------------- | -------------
 General testing | I imagine there are some clever recursive scenarios that could make this explode, if not just because of infinite looping.
-General code improvements | Please provide feedback on anything you think could be improved! I do not claim to be a JavaScript expert.
-Variadic support | forward template/function argument packs using a syntax something like ".." (all), "2.." (all from 2nd upto last), "..3" (all from 1st to 3rd) "2..4" (2nd, 3rd, and 4th)
-Don't go too crazy with features | confirm that sought after feature cannot be implemented easily with a dictionary
+General code improvements | Please provide feedback on anything you think could be improved. I do not claim to be a JavaScript expert.
+Variadic support | Forward template/function argument packs using a syntax something like ".." (all), "2.." (all from 2nd upto last), "..3" (all from 1st to 3rd) "2..4" (2nd, 3rd, and 4th).
+Don't go too crazy with features | Confirm that sought after feature cannot be implemented easily with a dictionary.
 
 # Answers
 It returns (1 + 2) * (5 - 3), which equals 6
