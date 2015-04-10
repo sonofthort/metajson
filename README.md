@@ -44,7 +44,7 @@ This will return...
 ]
 ~~~
 
-metajson.eval can also receive a dictionary, allowing a metajson object to refer to some predefined values. A dictionary can also contain actual functions, which can be invoked the same way as templates. Dictionaries offer a simple way to "extend" metajson.
+metajson.eval can also receive a dictionary, allowing a metajson object to refer to some predefined values. A dictionary can also contain actual functions, and invoke using the template invoke syntax. Dictionaries offer a simple way to "extend" metajson.
 
 ~~~
 metajson.eval({
