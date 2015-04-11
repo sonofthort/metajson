@@ -25,7 +25,7 @@ metajson.eval({
 			"reason": "__3"
 		}
 	},
-	// Required "result" value. This is what is evaluated to procude the result.
+	// Required "result" value. This is what is evaluated to produce the result.
 	"result": [
 		// Invoke a template by making its name the first element of an array.
 		// The remaining elements are the arguments to the template.
