@@ -96,19 +96,20 @@ metajson.test.equal('template_call_template', metajson.eval({
 	result: ['b', 1, 2]
 }), 2)
 
-metajson.test.equal('variadic_example1', metajson.eval({
+metajson.test.equal('negative_placeholders', metajson.eval({
 	templates: {
-		make_array: ['..']
+		a: '__-1',
+		b: ['a', '__-2']
 	},
-	result: ['make_array', 1, 2, 3, 4, 5]
-}), [1, 2, 3, 4, 5])
+	result: ['b', 1, 2]
+}), 1)
 
-metajson.test.equal('variadic_example2', metajson.eval({
+metajson.test.equal('variadic_example1', metajson.eval({
 	templates: {
 		make_array: ['..'],
 		remove_first: ['make_array', '2..'],
-		remove_last: ['make_array', '..-1'],
-		remove_first_and_last: ['make_array', '2..-1'],
+		remove_last: ['make_array', '..-2'],
+		remove_first_and_last: ['make_array', '2..-2'],
 		reverse: ['-1..1']
 	},
 	result: [

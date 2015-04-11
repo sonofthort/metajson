@@ -77,7 +77,8 @@ metajson.eval = function(obj, dictionary /*optional*/) {
 							right = right.length === 0 ? args.length : parseInt(right)
 							
 							var range = [left, right].map(function(index) {
-								return index < 1 ? args.length + index : index - 1
+								util.assert(index === 0, 'argument index cannot be zero')
+								return index < 0 ? args.length + index : index - 1
 							})
 							
 							var pack = args.slice(Math.min(range[0], range[1]), Math.max(range[0], range[1]))
@@ -105,10 +106,10 @@ metajson.eval = function(obj, dictionary /*optional*/) {
 				})
 			})
 		} else if (util.isString(value)) {
-			if (value.match(/^__\d+$/) || value.match(/^__\-\d+$/)) {
-				var index = parseInt(value.substring(2))
-				console.log('index = ' + (index < 0 ? args.length + index : index - 1))
-				return args[index < 0 ? args.length + index : index - 1]
+			if (value.match(/^__\d+$/)) {
+				return args[parseInt(value.substring(2)) - 1]
+			} else if (value.match(/^__\-\d+$/)) {
+				return args[args.length + parseInt(value.substring(2))]
 			}
 		}
 		

@@ -79,8 +79,8 @@ metajson.eval({
 	templates: {
 		make_array: ['..'],
 		remove_first: ['make_array', '2..'],
-		remove_last: ['make_array', '..-1'],
-		remove_first_and_last: ['make_array', '2..-1'],
+		remove_last: ['make_array', '..-2'],
+		remove_first_and_last: ['make_array', '2..-2'],
 		reverse: ['-1..1']
 	},
 	result: [
@@ -90,7 +90,7 @@ metajson.eval({
 		['remove_first_and_last', 1, 2, 3, 4, 5],
 		['reverse', 1, 2, 3, 4, 5]
 	]
-}
+})
 ~~~
 
 This returns...
@@ -104,6 +104,20 @@ This returns...
 	[5, 4, 3, 2, 1]
 ]
 ~~~
+
+Placeholders can also be negative.
+
+~~~
+metajson.eval({
+	templates: {
+		a: '__-1',
+		b: ['a', '__-2']
+	},
+	result: ['b', 1, 2]
+})
+~~~
+
+This returns 1.
 
 # TODO
 Feature | Notes
