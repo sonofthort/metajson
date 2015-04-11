@@ -8,7 +8,7 @@ Currently only a JavaScript implementation.
 
 One main objective of metajson is reducing duplication. This may not be a visual example of reduced size, but demonstrates the reuse concepts and metajson structure.
 
-~~~
+~~~JavaScript
 metajson.eval({
 	// Optional data section.
 	// Elements can be referenced anywhere else by their key.
@@ -37,7 +37,7 @@ metajson.eval({
 
 This will return...
 
-~~~
+~~~JavaScript
 [
 	{"bad": 3.14159, "reason": "edible"},
 	{"good": 6.28318, "reason": "non-edible"}
@@ -46,7 +46,7 @@ This will return...
 
 As you can see, templates work very much like C macros, simply replacing code where called. metajson.eval can also receive a dictionary, allowing a metajson object to refer to some predefined values. A dictionary can also contain actual functions, which can be invoked using the template invoke syntax. Dictionaries offer a simple way to "extend" metajson.
 
-~~~
+~~~JavaScript
 metajson.eval({
 	result: ["mul",
 		["add", 1, 2],
@@ -63,18 +63,19 @@ Can you guess what this returns? (Scroll to bottom to see result)
 
 # Variadic arguments
 
+Argument pack expansions will be detected **if they are elements in an array**. Arguments can only be expanded within an array.
+
 Syntax to expand arguments is
 - Optional integer, can be negative. Represents the first index.
 - Followed by two dots: ..
 - Followed by optional integer, can be negative. Represents the last index.
 
-If an index is negative, it starts from the end and works down, so -1 will be the index of the last argument.
+Index rules:
+- If an index is negative, it starts from the end and works down, so -1 will be the index of the last argument.
+- If the first index is blank, it means 1, and if the last index is blank, it means -1.
+- If the first index is greater than the last index, the arguments are reversed.
 
-If the first index is blank, it means 1, and if the last index is blank, it means -1.
-
-If the first index is greater than the last index, the arguments are reversed.
-
-~~~
+~~~JavaScript
 metajson.eval({
 	templates: {
 		make_array: ['..'],
@@ -95,7 +96,7 @@ metajson.eval({
 
 This returns...
 
-~~~
+~~~JavaScript
 [
 	[1, 2, 3, 4, 5],
 	[2, 3, 4, 5],
@@ -107,7 +108,7 @@ This returns...
 
 Placeholders can also be negative.
 
-~~~
+~~~JavaScript
 metajson.eval({
 	templates: {
 		a: '__-1',
