@@ -56,22 +56,22 @@ metajson.eval = function(obj, dictionary /*optional*/) {
 		replaced = false
 		
 	var templateReplace = function(value, args) {
-		console.log('templateReplace: ' + JSON.stringify(value))
-		console.log('templateReplace args: ' + JSON.stringify(args))
+		//console.log('templateReplace: ' + JSON.stringify(value))
+		//console.log('templateReplace args: ' + JSON.stringify(args))
 		if (util.isArray(value)) {
 			return util.def([], function(expanded) {
 				value.forEach(function(v) {
 					if (util.isString(v)) {
-						console.log('v: ' + JSON.stringify(v))
+						//console.log('v: ' + JSON.stringify(v))
 						if ((v.match(/\.\./) || []).length === 1) {
 							var index = v.indexOf('..'),
 								left = v.substring(0, index),
 								right = v.substring(index + 2)
 								
-							console.log(JSON.stringify({
-								left: left,
-								right: right
-							}))
+							//console.log(JSON.stringify({
+							//	left: left,
+							//	right: right
+							//}))
 							
 							left = left.length === 0 ? 1 : parseInt(left)
 							right = right.length === 0 ? args.length : parseInt(right)
@@ -95,7 +95,7 @@ metajson.eval = function(obj, dictionary /*optional*/) {
 					expanded.push(v)
 				})
 			}).map(function(v) {
-				console.log('calling with ' + v)
+				//console.log('calling with ' + v)
 				return templateReplace(v, args)
 			})
 		} else if (util.isObject(value)) {
@@ -117,7 +117,7 @@ metajson.eval = function(obj, dictionary /*optional*/) {
 	}
 	
 	var replaceFinal = function(value, pred, message) {
-		console.log('replaceFinal: ' + JSON.stringify(value))
+		//console.log('replaceFinal: ' + JSON.stringify(value))
 		pred = pred || function() {return true}
 		message = message || 'final replace does not pass predicate'
 	
@@ -136,9 +136,9 @@ metajson.eval = function(obj, dictionary /*optional*/) {
 	}
 		
 	var replace = function(value) {
-		console.log('replace: ' + JSON.stringify(value))
+		//console.log('replace: ' + JSON.stringify(value))
 		if (util.isArray(value)) {
-			console.log('replace array: ' + JSON.stringify(value))
+			//console.log('replace array: ' + JSON.stringify(value))
 			var first = value[0]
 			if (util.isString(first)) {
 				if (templates[first] != null) {
@@ -147,7 +147,7 @@ metajson.eval = function(obj, dictionary /*optional*/) {
 				} else if (data[first] != null) {
 					// do nothing here, we want to honor data over dictionary (will be handled below)
 				} else if (util.isFunction(dictionary[first])) {
-					console.log('invoking function: ' + first)
+					//console.log('invoking function: ' + first)
 					replaced = true
 					var args = replaceFinal(value.slice(1), util.isArray, 'invalid arguments to function')
 					return dictionary[first].apply(dictionary[first], args.map(function(v) {return replace(v)}))
