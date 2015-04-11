@@ -41,14 +41,13 @@ metajson.test.deepEqual = function(a, b) {
 }
 
 metajson.test("deepEqual", !metajson.test.deepEqual(
-	{a: [1, 2, {b: 3, c: 4}]},
-	{a: [1, 2, {b: 3, c: 5}]}
+	{a: [1, 2, {b: '3', c: 4}]},
+	{a: [1, 2, {b: '3', c: 5}]}
 ))
 
 metajson.test.equal = function(name, a, b) {
 	metajson.test(name, metajson.test.deepEqual(a, b))
 }
-
 
 metajson.test.equal('basic_example', metajson.eval({
 	// Optional data section.
@@ -88,3 +87,41 @@ metajson.test.equal('dictionary_example', metajson.eval({
 	"add": function(a, b) {return a + b},
 	"sub": function(a, b) {return a - b}
 }), 6)
+
+metajson.test.equal('template_call_template', metajson.eval({
+	templates: {
+		a: '__1',
+		b: ['a', '__2']
+	},
+	result: ['b', 1, 2]
+}), 2)
+
+metajson.test.equal('variadic_example1', metajson.eval({
+	templates: {
+		make_array: ['..']
+	},
+	result: ['make_array', 1, 2, 3, 4, 5]
+}), [1, 2, 3, 4, 5])
+
+metajson.test.equal('variadic_example2', metajson.eval({
+	templates: {
+		make_array: ['..'],
+		remove_first: ['make_array', '2..'],
+		remove_last: ['make_array', '..-1'],
+		remove_first_and_last: ['make_array', '2..-1'],
+		reverse: ['-1..1']
+	},
+	result: [
+		['make_array', 1, 2, 3, 4, 5],
+		['remove_first', 1, 2, 3, 4, 5],
+		['remove_last', 1, 2, 3, 4, 5],
+		['remove_first_and_last', 1, 2, 3, 4, 5],
+		['reverse', 1, 2, 3, 4, 5]
+	]
+}), [
+	[1, 2, 3, 4, 5],
+	[2, 3, 4, 5],
+	[1, 2, 3, 4],
+	[2, 3, 4],
+	[5, 4, 3, 2, 1]
+])

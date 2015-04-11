@@ -1,5 +1,5 @@
 # metajson
-Referenceable data and C-like macros in JSON. Also can reference/invoke functions.
+Referenceable data and variadic templates in JSON.
 
 # Languages
 Currently only a JavaScript implementation.
@@ -27,7 +27,7 @@ metajson.eval({
 	},
 	// Required "result" value. This is what is evaluated to procude the result.
 	"result": [
-		// Invoke a template by using its name as the first element of an array.
+		// Invoke a template by making its name the first element of an array.
 		// The remaining elements are the arguments to the template.
 		["proclaim", "bad", "pi", "edible"],
 		["proclaim", "good", "tau", "non-edible"]
@@ -61,12 +61,53 @@ metajson.eval({
 
 Can you guess what this returns? (Scroll to bottom to see result)
 
+# Variadic arguments
+
+Syntax to expand arguments is
+1. Optional integer, can be negative. Represents the first index.
+2. Followed by two dots: ..
+3. Followed by optional integer, can be negative. Represents the last index.
+
+If an index is negative, it starts from the end and works down, so -1 will be the index of the last argument.
+
+If the first index is greater than the last index, the arguments are reversed.
+
+~~~
+metajson.eval({
+	templates: {
+		make_array: ['..'],
+		remove_first: ['make_array', '2..'],
+		remove_last: ['make_array', '..-1'],
+		remove_first_and_last: ['make_array', '2..-1'],
+		reverse: ['-1..1']
+	},
+	result: [
+		['make_array', 1, 2, 3, 4, 5],
+		['remove_first', 1, 2, 3, 4, 5],
+		['remove_last', 1, 2, 3, 4, 5],
+		['remove_first_and_last', 1, 2, 3, 4, 5],
+		['reverse', 1, 2, 3, 4, 5]
+	]
+}
+~~~
+
+This returns...
+
+~~~
+[
+	[1, 2, 3, 4, 5],
+	[2, 3, 4, 5],
+	[1, 2, 3, 4],
+	[2, 3, 4],
+	[5, 4, 3, 2, 1]
+]
+~~~
+
 # TODO
 Feature | Notes
 ------------- | -------------
 General testing | I imagine there are some clever recursive scenarios that could make this explode, if not just because of infinite looping.
 General code improvements | Please provide feedback on anything you think could be improved. I do not claim to be a JavaScript expert.
-Variadic support | Forward template/function argument packs using a syntax something like ".." (all), "2.." (all from 2nd upto last), "..3" (all from 1st to 3rd) "2..4" (2nd, 3rd, and 4th).
 Don't go too crazy with features | Confirm that sought after feature cannot be implemented easily with a dictionary.
 
 # Answers
