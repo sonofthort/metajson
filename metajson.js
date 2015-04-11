@@ -141,12 +141,12 @@ metajson.eval = function(obj, dictionary /*optional*/) {
 			//console.log('replace array: ' + JSON.stringify(value))
 			var first = value[0]
 			if (util.isString(first)) {
-				if (templates[first] != null) {
+				if (templates.hasOwnProperty(first)) {
 					replaced = true
 					return replace(templateReplace(templates[first], value.slice(1)))
-				} else if (data[first] != null) {
+				} else if (data.hasOwnProperty(first)) {
 					// do nothing here, we want to honor data over dictionary (will be handled below)
-				} else if (util.isFunction(dictionary[first])) {
+				} else if (dictionary.hasOwnProperty(first) && util.isFunction(dictionary[first])) {
 					//console.log('invoking function: ' + first)
 					replaced = true
 					var args = replaceFinal(value.slice(1), util.isArray, 'invalid arguments to function')

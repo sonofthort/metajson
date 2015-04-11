@@ -126,3 +126,70 @@ metajson.test.equal('variadic_example1', metajson.eval({
 	[2, 3, 4],
 	[5, 4, 3, 2, 1]
 ])
+
+metajson.test.equal('array_helpers', metajson.eval({
+	templates: {
+		apply: ['unshift', '__2', '__1'],
+		reverse_args: ['-1..1']
+	},
+	result: [
+		['push', [0, 1], 2],
+		['unshift', [1, 2], 0],
+		['apply', 'reverse_args', [2, 1, 0]],
+		['apply', 'push', [[0, 1], 2]],
+		['+', 1, 2]
+	]
+}, {
+	push: function(a) {
+		var result = a.slice()
+		;[].slice.call(arguments, 1).forEach(function(arg) {result.push(arg)})
+		return result
+	},
+	unshift: function(a) {
+		var result = [].slice.call(arguments, 1)
+		a.forEach(function(arg) {result.push(arg)})
+		return result
+	},
+	cond: function(value, onTrue, onFalse) {
+		return value ? onTrue : onFalse
+	},
+	eq: function(a, b) {
+		return metajson.test.deepEqual(a, b)
+	},
+	gt: function(a, b) {
+		return a > b
+	},
+	gt: function(a, b) {
+		return a < b
+	},
+	length: function(a) {
+		return a.length
+	},
+	get: function(obj, key) {
+		return obj.hasOwnProperty(key) ? obj[key] : null
+	},
+	at: function(a, i) {
+		return a[i]
+	},
+	'+': function(a, b) {
+		return a + b
+	},
+	add_one: function(n) {
+		return n + 1
+	},
+	"switch": function() {
+		for (var i = 0; i < arguments.length; ++i) {
+			if (arguments[i][0]) {
+				return arguments[i][1]
+			}
+		}
+	}
+}), [
+	[0, 1, 2],
+	[0, 1, 2],
+	[0, 1, 2],
+	[0, 1, 2],
+	[0, 1, 2],
+	3,
+	3
+])
