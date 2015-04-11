@@ -123,7 +123,6 @@ This returns 1.
 Feature | Notes
 ------------- | -------------
 General testing | I imagine there are some clever recursive scenarios that could make this explode, if not just because of infinite looping.
-General code improvements | Please provide feedback on anything you think could be improved. I do not claim to be a JavaScript expert.
 Don't go too crazy with features | Confirm that sought after feature cannot be implemented easily with a dictionary.
 
 # Answers
