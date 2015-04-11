@@ -64,9 +64,9 @@ Can you guess what this returns? (Scroll to bottom to see result)
 # Variadic arguments
 
 Syntax to expand arguments is
-1. Optional integer, can be negative. Represents the first index.
-2. Followed by two dots: ..
-3. Followed by optional integer, can be negative. Represents the last index.
+- Optional integer, can be negative. Represents the first index.
+- Followed by two dots: ..
+- Followed by optional integer, can be negative. Represents the last index.
 
 If an index is negative, it starts from the end and works down, so -1 will be the index of the last argument.
 
