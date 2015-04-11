@@ -70,6 +70,8 @@ Syntax to expand arguments is
 
 If an index is negative, it starts from the end and works down, so -1 will be the index of the last argument.
 
+If the first index is blank, it means 1, and if the last index is blank, it means -1.
+
 If the first index is greater than the last index, the arguments are reversed.
 
 ~~~
