@@ -7,7 +7,7 @@ metajson = {}
 metajson.util = {}
 
 metajson.util.assert = function(value, message) {
-	if (value != null) {
+	if (value) {
 		return value
 	}
 	message = message || 'value is null or undefined'
@@ -40,20 +40,48 @@ metajson.util.copyObject = function(obj) {
 	})	
 }
 
-// obj and dictionary should not be modified by this function
-metajson.eval = function(obj, dictionary /*optional*/) {
-	var util = metajson.util
+metajson.util.prefixKeys = function(obj, prefix) {
+	return metajson.util.def({}, function(result) {
+		metajson.util.kv(obj, function(k, v) {
+			result[prefix + k] = v
+		})
+	})
+}
 
+metajson.util.merge = function(obj1, obj2) {
+	return metajson.util.def(metajson.util.copyObject(obj1), function(result) {
+		metajson.util.kv(obj2, function(k, v) {
+			result[k] = v
+		})
+	})
+}
+
+metajson.eval = function(obj /*, libraries...*/) {
+	var util = metajson.util
+	
 	util.assert(util.isObject(obj), 'obj must be an Object')
-	util.assert(obj.result != null, 'obj.result is null or undefined')
-	util.assert(util.isObject(obj.data) || obj.data == null, 'obj.data must be null or an Object')
-	util.assert(util.isObject(obj.templates) || obj.templates == null, 'obj.templates must be null or an Object')
+	util.assert(obj.result != null, 'obj must have a result member')
 	
-	dictionary = dictionary || {}
+	var o = {}
 	
-	var data = obj.data ? util.copyObject(obj.data) : {},
-		templates = obj.templates ? util.copyObject(obj.templates) : {},
+	for (var i = 1; i < arguments.length; ++i) {
+		util.assert(util.isObject(arguments[i]), 'library ' + i + ' must be an Object')
+		o = util.merge(o, arguments[i])
+	}
+	
+	o = util.merge(o, obj)
+	
+	var data = util.isObject(o.data) ? o.data : {},
+		templates = util.isObject(o.templates) ? o.templates : {},
+		functions = util.isObject(o.functions) ? o.functions : {},
 		replaced = false
+		
+	// convert templates to functions
+	util.kv(templates, function(k, v) {
+		functions[k] = function() {
+			return templateReplace(v, [].slice.call(arguments))
+		}
+	})
 		
 	var templateReplace = function(value, args) {
 		//console.log('templateReplace: ' + JSON.stringify(value))
@@ -64,6 +92,10 @@ metajson.eval = function(obj, dictionary /*optional*/) {
 					if (util.isString(v)) {
 						//console.log('v: ' + JSON.stringify(v))
 						if ((v.match(/\.\./) || []).length === 1) {
+							if (args.length === 0) {
+								return
+							}
+						
 							var index = v.indexOf('..'),
 								left = v.substring(0, index),
 								right = v.substring(index + 2)
@@ -77,11 +109,11 @@ metajson.eval = function(obj, dictionary /*optional*/) {
 							right = right.length === 0 ? args.length : parseInt(right)
 							
 							var range = [left, right].map(function(index) {
-								util.assert(index === 0, 'argument index cannot be zero')
+								util.assert(index !== 0, 'argument index cannot be zero')
 								return index < 0 ? args.length + index : index - 1
 							})
 							
-							var pack = args.slice(Math.min(range[0], range[1]), Math.max(range[0], range[1]))
+							var pack = args.slice(Math.min(range[0], range[1]), Math.max(range[0], range[1]) + 1)
 							
 							if (range[0] > range[1]) {
 								pack.reverse()
@@ -141,17 +173,20 @@ metajson.eval = function(obj, dictionary /*optional*/) {
 			//console.log('replace array: ' + JSON.stringify(value))
 			var first = value[0]
 			if (util.isString(first)) {
-				if (templates.hasOwnProperty(first)) {
-					replaced = true
-					return replace(templateReplace(templates[first], value.slice(1)))
-				} else if (data.hasOwnProperty(first)) {
+				if (data.hasOwnProperty(first)) {
 					// do nothing here, we want to honor data over dictionary (will be handled below)
-				} else if (dictionary.hasOwnProperty(first) && util.isFunction(dictionary[first])) {
+				} else if (functions.hasOwnProperty(first)) {
 					//console.log('invoking function: ' + first)
 					replaced = true
-					var args = replaceFinal(value.slice(1), util.isArray, 'invalid arguments to function')
-					return dictionary[first].apply(dictionary[first], args.map(function(v) {return replace(v)}))
+					return functions[first].apply(null, value.slice(1).map(function(value) {
+						return replaceFinal(value)
+					}))
 				}
+			} else if (util.isFunction(first)) {
+				replaced = true
+				return first.apply(null, value.slice(1).map(function(value) {
+					return replaceFinal(value)
+				}))
 			}
 			return value.map(function(v) {return replace(v)})
 		} else if (util.isObject(value)) {
@@ -162,12 +197,12 @@ metajson.eval = function(obj, dictionary /*optional*/) {
 				})
 			})
 		} else if (util.isString(value)) {
-			if (data[value]) {
+			if (data.hasOwnProperty(value)) {
 				replaced = true
 				return data[value]
-			} else if (dictionary[value]) {
+			} else if (functions.hasOwnProperty(value)) {
 				replaced = true
-				return dictionary[value]
+				return functions[value]
 			}
 		}
 		
@@ -177,6 +212,6 @@ metajson.eval = function(obj, dictionary /*optional*/) {
 	return replaceFinal(obj.result)
 }
 
-metajson.parse = function(jsonString, dictionary /*optional*/) {
-	return metajson.eval(JSON.parse(jsonString), dictionary)
+metajson.parse = function(jsonString /*, libraries...*/) {
+	return metajson.eval.apply(null, [JSON.parse(jsonString)].concat([].slice.call(arguments, 1)))
 }
