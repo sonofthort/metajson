@@ -130,6 +130,68 @@ metajson.test.equal('variadic_example1', metajson.eval({
 	[5, 4, 3, 2, 1]
 ])
 
+metajson.test.equal('lambda', metajson.eval({
+	result: [
+		// create a lambda which adds 1 to its argument
+		// and call it with a value of 2
+		{apply: [
+			{curry: ['add', 1]},
+			[2]
+		]},
+		// when calling into a library function which a function
+		// passed to it, no need to use apply
+		// map an array with a lambda which adds 2 then multiplies by 3
+		{map: [
+			[0, 1, 2],
+			{compose: [
+				{curry: ['add', 2]},
+				{curry: ['mul', 3]}
+			]}
+		]}
+	]
+}, {
+	functions: {
+		// write apply in JavaScript to invoke lambdas
+		apply: function(func, args) {
+			return func.apply(null, args)
+		},
+		// use argument binding functions to create lambdas
+		curry: function(func) {
+			var args = [].slice.call(arguments, 1)
+			return function() {
+				return func.apply(null, args.concat([].slice.call(arguments)))
+			}
+		},
+		compose: function() {
+			var funcs = [].slice.call(arguments)
+			return function() {
+				var result = funcs[0].apply(null, [].slice.call(arguments)),
+					length = funcs.length
+					
+				for (var i = 1; i < length; ++i) {
+					result = funcs[i](result)
+				}
+				
+				return result
+			}
+		},
+		// need existing library of functions to bind arguments to
+		add: function(a, b) {
+			return a + b
+		},
+		mul: function(a, b) {
+			return a * b
+		},
+		// some predefined algos work well with lambdas also
+		map: function(arr, func) {
+			return arr.map(func)
+		}
+	}
+}), [
+	3,
+	[6, 9, 12]
+])
+
 metajson.test.equal('array_helpers', metajson.eval({
 	templates: {
 		apply: {'__1': '__2'},
@@ -142,7 +204,7 @@ metajson.test.equal('array_helpers', metajson.eval({
 		{map: [[1, 2, 3], 'sub_one']},
 		{apply: ['reverse', [2, 1, 0]]},
 		{apply: ['push', [[0, 1], 2]]},
-		{map: [[-1, 0, 1], {bind_left: ['add', 1]}]} // hello lambda :)
+		{map: [[-1, 0, 1], {bind_left: ['add', 1]}]}
 	]
 }, {
 	functions: {
