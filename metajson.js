@@ -76,6 +76,15 @@ metajson.eval = function(obj /*, libraries...*/) {
 		functions = util.isObject(o.functions) ? o.functions : {},
 		replaced = false
 		
+	// wrap functions
+	util.kv(functions, function(k, v) {
+		functions[k] = function() {
+			return v.apply(null, [].slice.call(arguments).map(function(arg) {
+				return util.isString(arg) && functions.hasOwnProperty(arg) ? functions[arg] : arg
+			}))
+		}
+	})
+		
 	// convert templates to functions
 	util.kv(templates, function(k, v) {
 		functions[k] = function() {
@@ -171,25 +180,24 @@ metajson.eval = function(obj /*, libraries...*/) {
 		//console.log('replace: ' + JSON.stringify(value))
 		if (util.isArray(value)) {
 			//console.log('replace array: ' + JSON.stringify(value))
-			var first = value[0]
-			if (util.isString(first)) {
-				if (data.hasOwnProperty(first)) {
-					// do nothing here, we want to honor data over dictionary (will be handled below)
-				} else if (functions.hasOwnProperty(first)) {
-					//console.log('invoking function: ' + first)
-					replaced = true
-					return functions[first].apply(null, value.slice(1).map(function(value) {
-						return replaceFinal(value)
-					}))
-				}
-			} else if (util.isFunction(first)) {
+			return value.map(function(v) {return replace(v)})
+		} else if (util.isObject(value)) {
+			var size = 0,
+				key
+			
+			util.kv(value, function(k) {
+				key = k
+				++size
+			})
+			
+			if (size === 1 && functions.hasOwnProperty(key)) {
+				util.assert(util.isArray(value[key]), 'arguments to function ' + key + ' must be an array')
 				replaced = true
-				return first.apply(null, value.slice(1).map(function(value) {
+				return functions[key].apply(null, value[key].map(function(value) {
 					return replaceFinal(value)
 				}))
 			}
-			return value.map(function(v) {return replace(v)})
-		} else if (util.isObject(value)) {
+		
 			return util.def({}, function(result) {
 				util.kv(value, function(k, v) {
 					var key = replaceFinal(k, util.isString, 'key did not evaluate to a string')
@@ -200,10 +208,10 @@ metajson.eval = function(obj /*, libraries...*/) {
 			if (data.hasOwnProperty(value)) {
 				replaced = true
 				return data[value]
-			} else if (functions.hasOwnProperty(value)) {
+			}/* else if (functions.hasOwnProperty(value)) {
 				replaced = true
 				return functions[value]
-			}
+			}*/
 		}
 		
 		return value

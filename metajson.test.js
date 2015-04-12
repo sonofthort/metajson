@@ -70,8 +70,8 @@ metajson.test.equal('basic_example', metajson.eval({
 	"result": [
 		// Invoke a template by making its name the first element of an array.
 		// The remaining elements are the arguments to the template.
-		["proclaim", "bad", "pi", "edible"],
-		["proclaim", "good", "tau", "non-edible"]
+		{"proclaim": ["bad", "pi", "edible"]},
+		{"proclaim": ["good", "tau", "non-edible"]}
 	]
 }), [
 	{"bad": 3.14159, "reason": "edible"},
@@ -79,10 +79,10 @@ metajson.test.equal('basic_example', metajson.eval({
 ])
 
 metajson.test.equal('dictionary_example', metajson.eval({
-	result: ["mul",
-		["add", 1, 2],
-		["sub", 5, 3]
-	]
+	result: {"mul": [
+		{"add": [1, 2]},
+		{"sub": [5, 3]}
+	]}
 }, {
 	functions: {
 		"mul": function(a, b) {return a * b},
@@ -94,33 +94,33 @@ metajson.test.equal('dictionary_example', metajson.eval({
 metajson.test.equal('template_call_template', metajson.eval({
 	templates: {
 		a: '__1',
-		b: ['a', '__2']
+		b: {a: ['__2']}
 	},
-	result: ['b', 1, 2]
+	result: {b: [1, 2]}
 }), 2)
 
 metajson.test.equal('negative_placeholders', metajson.eval({
 	templates: {
 		a: '__-1',
-		b: ['a', '__-2']
+		b: {a: ['__-2']}
 	},
-	result: ['b', 1, 2]
+	result: {b: [1, 2]}
 }), 1)
 
 metajson.test.equal('variadic_example1', metajson.eval({
 	templates: {
 		make_array: ['..'],
-		remove_first: ['make_array', '2..'],
-		remove_last: ['make_array', '..-2'],
-		remove_first_and_last: ['make_array', '2..-2'],
+		remove_first: {make_array: ['2..']},
+		remove_last: {make_array: ['..-2']},
+		remove_first_and_last: {make_array: ['2..-2']},
 		reverse: ['-1..1']
 	},
 	result: [
-		['make_array', 1, 2, 3, 4, 5],
-		['remove_first', 1, 2, 3, 4, 5],
-		['remove_last', 1, 2, 3, 4, 5],
-		['remove_first_and_last', 1, 2, 3, 4, 5],
-		['reverse', 1, 2, 3, 4, 5]
+		{make_array: [1, 2, 3, 4, 5]},
+		{remove_first: [1, 2, 3, 4, 5]},
+		{remove_last: [1, 2, 3, 4, 5]},
+		{remove_first_and_last: [1, 2, 3, 4, 5]},
+		{reverse: [1, 2, 3, 4, 5]}
 	]
 }), [
 	[1, 2, 3, 4, 5],
@@ -132,16 +132,17 @@ metajson.test.equal('variadic_example1', metajson.eval({
 
 metajson.test.equal('array_helpers', metajson.eval({
 	templates: {
-		apply: ['unshift', '__2', '__1'],
-		reverse_args: ['-1..1'],
-		sub_one: ['-', '__1', 1]
+		apply: {'__1': '__2'},
+		reverse: ['-1..1'],
+		sub_one: {sub: ['__1', 1]}
 	},
 	result: [
-		['push', [0, 1], 2],
-		['unshift', [1, 2], 0],
-		['map', [1, 2, 3], 'sub_one'],
-		['apply', 'reverse_args', [2, 1, 0]],
-		['apply', 'push', [[0, 1], 2]]
+		{push: [[0, 1], 2]},
+		{unshift: [[1, 2], 0]},
+		{map: [[1, 2, 3], 'sub_one']},
+		{apply: ['reverse', [2, 1, 0]]},
+		{apply: ['push', [[0, 1], 2]]},
+		{map: [[-1, 0, 1], {bind_left: ['add', 1]}]} // hello lambda :)
 	]
 }, {
 	functions: {
@@ -150,9 +151,6 @@ metajson.test.equal('array_helpers', metajson.eval({
 			;[].slice.call(arguments, 1).forEach(function(arg) {result.push(arg)})
 			return result
 		},
-		/*apply: function(func, args) {
-			return func.apply(null, args)
-		},*/
 		unshift: function(a) {
 			var result = [].slice.call(arguments, 1)
 			a.forEach(function(arg) {result.push(arg)})
@@ -179,10 +177,10 @@ metajson.test.equal('array_helpers', metajson.eval({
 		at: function(a, i) {
 			return a[i]
 		},
-		'+': function(a, b) {
+		'add': function(a, b) {
 			return a + b
 		},
-		'-': function(a, b) {
+		'sub': function(a, b) {
 			return a - b
 		},
 		add_one: function(n) {
@@ -197,9 +195,22 @@ metajson.test.equal('array_helpers', metajson.eval({
 		},
 		map: function(array, func) {
 			return array.map(func)
+		},
+		bind_left: function(func) {
+			var args = [].slice.call(arguments, 1)
+			return function() {
+				return func.apply(null, args.concat([].slice.call(arguments)))
+			}
+		},
+		bind_right: function(func) {
+			var args = [].slice.call(arguments, 1)
+			return function() {
+				return func.apply(null, [].slice.call(arguments).concat(args))
+			}
 		}
 	}
 }), [
+	[0, 1, 2],
 	[0, 1, 2],
 	[0, 1, 2],
 	[0, 1, 2],
