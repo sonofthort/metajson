@@ -17,8 +17,8 @@ metajson.eval({
 		"tau": 6.28318
 	},
 	// Optional templates section.
-	// Special strings "__1", "__2", "__3", and so on are placeholders and will
-	// be replaced with the arguments passed to the template when invoked.
+	// Special strings "__1", "__2", "__3", and so on are placeholders and will be replaced
+	// with the arguments passed to the template when invoked.
 	"templates": {
 		"proclaim": {
 			"__1": "__2",
@@ -27,10 +27,10 @@ metajson.eval({
 	},
 	// Required "result" value. This is what is evaluated to produce the result.
 	"result": [
-		// Invoke a template by making its name the first element of an array.
-		// The remaining elements are the arguments to the template.
-		["proclaim", "bad", "pi", "edible"],
-		["proclaim", "good", "tau", "non-edible"]
+		// Invoke a template by making its name the first and only key
+		// of an object whose cooresponding value is an array of arguments
+		{"proclaim": ["bad", "pi", "edible"]},
+		{"proclaim": ["good", "tau", "non-edible"]}
 	]
 })
 ~~~
@@ -48,14 +48,16 @@ As you can see, templates work very much like C macros, simply replacing code wh
 
 ~~~JavaScript
 metajson.eval({
-	result: ["mul",
-		["add", 1, 2],
-		["sub", 5, 3]
-	]
+	result: {"mul": [
+		{"add": [1, 2]},
+		{"sub": [5, 3]}
+	]}
 }, {
-	"mul": function(a, b) {return a * b},
-	"add": function(a, b) {return a + b},
-	"sub": function(a, b) {return a - b}
+	functions: {
+		"mul": function(a, b) {return a * b},
+		"add": function(a, b) {return a + b},
+		"sub": function(a, b) {return a - b}
+	}
 })
 ~~~
 
@@ -79,17 +81,17 @@ Index rules:
 metajson.eval({
 	templates: {
 		make_array: ['..'],
-		remove_first: ['make_array', '2..'],
-		remove_last: ['make_array', '..-2'],
-		remove_first_and_last: ['make_array', '2..-2'],
+		remove_first: {make_array: ['2..']},
+		remove_last: {make_array: ['..-2']},
+		remove_first_and_last: {make_array: ['2..-2']},
 		reverse: ['-1..1']
 	},
 	result: [
-		['make_array', 1, 2, 3, 4, 5],
-		['remove_first', 1, 2, 3, 4, 5],
-		['remove_last', 1, 2, 3, 4, 5],
-		['remove_first_and_last', 1, 2, 3, 4, 5],
-		['reverse', 1, 2, 3, 4, 5]
+		{make_array: [1, 2, 3, 4, 5]},
+		{remove_first: [1, 2, 3, 4, 5]},
+		{remove_last: [1, 2, 3, 4, 5]},
+		{remove_first_and_last: [1, 2, 3, 4, 5]},
+		{reverse: [1, 2, 3, 4, 5]}
 	]
 })
 ~~~
@@ -112,9 +114,9 @@ Placeholders can also be negative.
 metajson.eval({
 	templates: {
 		a: '__-1',
-		b: ['a', '__-2']
+		b: {a: ['__-2']}
 	},
-	result: ['b', 1, 2]
+	result: {b: [1, 2]}
 })
 ~~~
 
