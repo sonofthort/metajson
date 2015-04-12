@@ -208,10 +208,7 @@ metajson.eval = function(obj /*, libraries...*/) {
 			if (data.hasOwnProperty(value)) {
 				replaced = true
 				return data[value]
-			}/* else if (functions.hasOwnProperty(value)) {
-				replaced = true
-				return functions[value]
-			}*/
+			}
 		}
 		
 		return value

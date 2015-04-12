@@ -239,21 +239,14 @@ metajson.test.equal('array_helpers', metajson.eval({
 		at: function(a, i) {
 			return a[i]
 		},
-		'add': function(a, b) {
+		add: function(a, b) {
 			return a + b
 		},
-		'sub': function(a, b) {
+		sub: function(a, b) {
 			return a - b
 		},
 		add_one: function(n) {
 			return n + 1
-		},
-		"switch": function() {
-			for (var i = 0; i < arguments.length; ++i) {
-				if (arguments[i][0]) {
-					return arguments[i][1]
-				}
-			}
 		},
 		map: function(array, func) {
 			return array.map(func)
