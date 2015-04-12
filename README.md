@@ -133,8 +133,6 @@ metajson.eval({
 			{curry: ['add', 1]},
 			[2]
 		]},
-		// when calling into a library function which a function
-		// passed to it, no need to use apply
 		// map an array with a lambda which adds 2 then multiplies by 3
 		{map: [
 			[0, 1, 2],
