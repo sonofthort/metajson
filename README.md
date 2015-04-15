@@ -1,7 +1,7 @@
 # metajson
 metajson is json which evaluates into json.
 
-# Examples
+# examples
 
 One main objective of metajson is reducing duplication. This may not be a visual example of reduced size, but demonstrates the reuse concepts and metajson structure.
 
@@ -60,7 +60,7 @@ metajson.eval({
 
 Can you guess what this returns? (Scroll to bottom to see result)
 
-# Variadic arguments
+# variadic arguments
 
 Argument pack expansions will be detected **if they are elements in an array**. Arguments can only be expanded within an array.
 
@@ -119,7 +119,7 @@ metajson.eval({
 
 This returns 1.
 
-# Lambdas
+# lambdas
 Anonymous functions can be achieved by using a dictionary with some function binding helpers.
 ~~~JavaScript
 metajson.eval({
@@ -187,11 +187,11 @@ This returns...
 ]
 ~~~
 
-# TODO
+# todo
 Feature | Notes
 ------------- | -------------
 General testing | I imagine there are some clever recursive scenarios that could make this explode, if not just because of infinite looping.
 Don't go too crazy with features | Confirm that sought after feature cannot be implemented easily with a dictionary. Consider creating a "standard" dictionary of useful helpers. The standard dictionary would be included if the metajson object has an "include" array like ["standard"].
 
-# Answers
+# answers
 It returns (1 + 2) * (5 - 3), which equals 6
