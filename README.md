@@ -123,6 +123,13 @@ This returns 1.
 Anonymous functions can be achieved by using a dictionary with some function binding helpers.
 ~~~JavaScript
 metajson.eval({
+	templates: {	
+		// can use this trick to assign a function to a key
+		// anonymous functions are assigned a key
+		// and every string will be matched against this new key
+		// so the function will be invoked when the key is "called"
+		apply: {'__1': '__2'}
+	},
 	result: [
 		// create a lambda which adds 1 to its argument
 		// and call it with a value of 2
