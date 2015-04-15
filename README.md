@@ -1,8 +1,5 @@
 # metajson
-Referenceable data and variadic templates in JSON.
-
-# Languages
-Currently only a JavaScript implementation.
+metajson is json which evaluates into json.
 
 # Examples
 
