@@ -125,9 +125,8 @@ Anonymous functions can be achieved by using a dictionary with some function bin
 metajson.eval({
 	templates: {	
 		// can use this trick to assign a function to a key
-		// anonymous functions are assigned a key
-		// and every string will be matched against this new key
-		// so the function will be invoked when the key is "called"
+		// anonymous functions are assigned and replaced with a key
+		// just like dictionary and templates have keys
 		apply: {'__1': '__2'}
 	},
 	result: [
@@ -148,10 +147,6 @@ metajson.eval({
 	]
 }, {
 	functions: {
-		// write apply in JavaScript to invoke lambdas
-		apply: function(func, args) {
-			return func.apply(null, args)
-		},
 		// use argument binding functions to create lambdas
 		curry: function(func) {
 			var args = [].slice.call(arguments, 1)
