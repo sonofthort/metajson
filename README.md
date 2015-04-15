@@ -126,7 +126,7 @@ metajson.eval({
 	templates: {	
 		// can use this trick to assign a function to a key
 		// anonymous functions are assigned and replaced with a key
-		// just like dictionary and templates have keys
+		// just as dictionary and templates have keys
 		apply: {'__1': '__2'}
 	},
 	result: [
