@@ -72,8 +72,8 @@ Expansion syntax:
 - Followed by an unsigned or negative integer, the last index.
 
 Index rules:
-- If an index is negative, it starts from the end and works down, so -1 will be the index of the last argument.
-- If the first index is blank, 1 is used, and if the last index is blank, -1 is used.
+- The last argument is at index -1, the second to last at index -2, and so on.
+- A blank first index means 1, a blank last index means -1
 - If the first index is greater than the last index, the arguments are reversed.
 
 ~~~JavaScript
