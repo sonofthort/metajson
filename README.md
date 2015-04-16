@@ -1,5 +1,5 @@
 # metajson
-metajson is json which evaluates into json.
+metajson is json which represents json.
 
 # examples
 
