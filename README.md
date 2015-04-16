@@ -187,9 +187,3 @@ This returns...
 	[6, 9, 12]
 ]
 ~~~
-
-# todo
-Feature | Notes
-------------- | -------------
-General testing | I imagine there are some clever recursive scenarios that could make this explode, if not just because of infinite looping.
-Don't go too crazy with features | Confirm that sought after feature cannot be implemented easily with a dictionary. Consider creating a "standard" dictionary of useful helpers. The standard dictionary would be included if the metajson object has an "include" array like ["standard"].
