@@ -43,19 +43,19 @@ This will return...
 ]
 ~~~
 
-As you can see, templates work very much like C macros, simply replacing code where called. metajson.eval can also receive a dictionary, allowing a metajson object to refer to some predefined values. A dictionary can also contain actual functions, which can be invoked using the template invoke syntax. Dictionaries offer a simple way to "extend" metajson.
+metajson.eval can also receive a dictionary, allowing a metajson object to refer to some predefined values. A dictionary can also contain actual functions, which can be invoked using the template invoke syntax. Dictionaries offer a simple way to "extend" metajson.
 
 ~~~JavaScript
 metajson.eval({
-	result: {"mul": [
-		{"add": [1, 2]},
-		{"sub": [5, 3]}
+	result: {mul: [
+		{add: [1, 2]},
+		{sub: [5, 3]}
 	]}
 }, {
 	functions: {
-		"mul": function(a, b) {return a * b},
-		"add": function(a, b) {return a + b},
-		"sub": function(a, b) {return a - b}
+		mul: function(a, b) {return a * b},
+		add: function(a, b) {return a + b},
+		sub: function(a, b) {return a - b}
 	}
 })
 ~~~
