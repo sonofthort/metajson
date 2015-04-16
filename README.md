@@ -67,13 +67,13 @@ Returns 6.
 Arguments can only be expanded within an array.
 
 Expansion syntax:
-- Optional integer, can be negative. Represents the first index.
+- Unsigned or negative integer, the first index.
 - Followed by two dots: ..
-- Followed by optional integer, can be negative. Represents the last index.
+- Followed by an unsigned or negative integer, the last index.
 
 Index rules:
 - If an index is negative, it starts from the end and works down, so -1 will be the index of the last argument.
-- If the first index is blank, it means 1, and if the last index is blank, it means -1.
+- If the first index is blank, 1 is used, and if the last index is blank, -1 is used.
 - If the first index is greater than the last index, the arguments are reversed.
 
 ~~~JavaScript
