@@ -74,7 +74,16 @@ metajson.eval = function(obj /*, libraries...*/) {
 	var data = util.isObject(o.data) ? o.data : {},
 		templates = util.isObject(o.templates) ? o.templates : {},
 		functions = util.isObject(o.functions) ? o.functions : {},
-		replaced = false
+		replaced = false,
+		nextIdNum = 0
+	
+	var nextId = function() {
+		do {
+			var id = '##' + (nextIdNum++)
+		} while (functions.hasOwnProperty(id) || data.hasOwnProperty(id))
+		
+		return id
+	}
 		
 	// wrap functions
 	util.kv(functions, function(k, v) {
@@ -83,6 +92,8 @@ metajson.eval = function(obj /*, libraries...*/) {
 				return util.isString(arg) && functions.hasOwnProperty(arg) ? functions[arg] : arg
 			}))
 		}
+		
+		functions[k].metajson_name = k
 	})
 		
 	// convert templates to functions
@@ -90,6 +101,8 @@ metajson.eval = function(obj /*, libraries...*/) {
 		functions[k] = function() {
 			return templateReplace(v, [].slice.call(arguments))
 		}
+		
+		functions[k].metajson_name = k
 	})
 		
 	var templateReplace = function(value, args) {
@@ -142,7 +155,7 @@ metajson.eval = function(obj /*, libraries...*/) {
 		} else if (util.isObject(value)) {
 			return util.def({}, function(result) {
 				util.kv(value, function(k, v) {
-					var key = replaceFinal(templateReplace(k, args), util.isString, 'template key did not evaluate to a string')
+					var key = finalLookupReplace(templateReplace(k, args), util.isString, 'template key did not evaluate to a string')
 					result[key] = templateReplace(v, args)
 				})
 			})
@@ -157,16 +170,16 @@ metajson.eval = function(obj /*, libraries...*/) {
 		return value
 	}
 	
-	var replaceFinal = function(value, pred, message) {
-		//console.log('replaceFinal: ' + JSON.stringify(value))
+	var finalLookupReplace = function(value, pred, message) {
+		//console.log('finalLookupReplace: ' + JSON.stringify(value))
 		pred = pred || function() {return true}
-		message = message || 'final replace does not pass predicate'
+		message = message || 'final lookupReplace does not pass predicate'
 	
 		var lastReplaced = replaced
 		
 		do {
 			replaced = false
-			value = replace(value)
+			value = lookupReplace(value)
 		} while (replaced || !pred(value))
 		
 		replaced = lastReplaced
@@ -176,11 +189,11 @@ metajson.eval = function(obj /*, libraries...*/) {
 		return value
 	}
 		
-	var replace = function(value) {
-		//console.log('replace: ' + JSON.stringify(value))
+	var lookupReplace = function(value) {
+		//console.log('lookupReplace: ' + JSON.stringify(value))
 		if (util.isArray(value)) {
-			//console.log('replace array: ' + JSON.stringify(value))
-			return value.map(function(v) {return replace(v)})
+			//console.log('lookupReplace array: ' + JSON.stringify(value))
+			return value.map(function(v) {return lookupReplace(v)})
 		} else if (util.isObject(value)) {
 			var size = 0,
 				key
@@ -194,14 +207,14 @@ metajson.eval = function(obj /*, libraries...*/) {
 				util.assert(util.isArray(value[key]), 'arguments to function ' + key + ' must be an array')
 				replaced = true
 				return functions[key].apply(null, value[key].map(function(value) {
-					return replaceFinal(value)
+					return finalLookupReplace(value)
 				}))
 			}
 		
 			return util.def({}, function(result) {
 				util.kv(value, function(k, v) {
-					var key = replaceFinal(k, util.isString, 'key did not evaluate to a string')
-					result[key] = replace(v)
+					var key = finalLookupReplace(k, util.isString, 'key did not evaluate to a string')
+					result[key] = lookupReplace(v)
 				})
 			})
 		} else if (util.isString(value)) {
@@ -209,12 +222,42 @@ metajson.eval = function(obj /*, libraries...*/) {
 				replaced = true
 				return data[value]
 			}
+		} else if (util.isFunction(value)) {
+			replaced = true
+			
+			if (!value.metajson_name) {
+				value.metajson_name = nextId()
+				functions[value.metajson_name] = value
+			}
+			
+			return value.metajson_name
 		}
 		
 		return value
 	}
 	
-	return replaceFinal(obj.result)
+	var beforeStringReplace = finalLookupReplace(obj.result)
+	
+	var stringReplace = function(value) {
+		if (util.isString(value)) {
+			util.assert(value.charAt(0) === '`', 'Unmatched symbol: "' + value + '"')
+			return value.substring(1)
+		} else if (util.isArray(value)) {
+			return value.map(stringReplace)
+		} else if (util.isObject(value)) {
+			var result = {}
+			
+			util.kv(value, function(k, v) {
+				result[stringReplace(k)] = stringReplace(v)
+			})
+			
+			return result
+		}
+		
+		return value
+	}
+	
+	return stringReplace(beforeStringReplace)
 }
 
 metajson.parse = function(jsonString /*, libraries...*/) {

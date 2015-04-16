@@ -1,3 +1,5 @@
+'use stict';
+
 metajson.test = function(description, value) {
 	metajson.util.assert(value, 'metajson test case failed! ' + description)
 	console.log('metajson test case passed! ' + description)
@@ -63,15 +65,15 @@ metajson.test.equal('basic_example', metajson.eval({
 	"templates": {
 		"proclaim": {
 			"__1": "__2",
-			"reason": "__3"
+			"`reason": "__3"
 		}
 	},
 	// Required "result" value. This is what is evaluated to produce the result.
 	"result": [
 		// Invoke a template by making its name the first element of an array.
 		// The remaining elements are the arguments to the template.
-		{"proclaim": ["bad", "pi", "edible"]},
-		{"proclaim": ["good", "tau", "non-edible"]}
+		{"proclaim": ["`bad", "pi", "`edible"]},
+		{"proclaim": ["`good", "tau", "`non-edible"]}
 	]
 }), [
 	{"bad": 3.14159, "reason": "edible"},
@@ -155,10 +157,7 @@ metajson.test.equal('lambda', metajson.eval({
 		},
 		// use argument binding functions to create lambdas
 		curry: function(func) {
-			var args = [].slice.call(arguments, 1)
-			return function() {
-				return func.apply(null, args.concat([].slice.call(arguments)))
-			}
+			return func.bind.apply(func, [null].concat([].slice.call(arguments, 1)))
 		},
 		compose: function() {
 			var funcs = [].slice.call(arguments)
@@ -193,6 +192,7 @@ metajson.test.equal('lambda', metajson.eval({
 metajson.test.equal('array_helpers', metajson.eval({
 	templates: {
 		apply: {'__1': '__2'},
+		call: {'__1': ['2..']},
 		reverse: ['-1..1'],
 		sub_one: {sub: ['__1', 1]}
 	},
@@ -202,6 +202,8 @@ metajson.test.equal('array_helpers', metajson.eval({
 		{map: [[1, 2, 3], 'sub_one']},
 		{apply: ['reverse', [2, 1, 0]]},
 		{apply: ['push', [[0, 1], 2]]},
+		{apply: [{bind_left: ['push', [0, 1]]}, [2]]},
+		{call: [{bind_left: ['push', []]}, 0, 1, 2]},
 		{map: [[-1, 0, 1], {bind_left: ['add', 1]}]}
 	]
 }, {
@@ -263,6 +265,8 @@ metajson.test.equal('array_helpers', metajson.eval({
 		}
 	}
 }), [
+	[0, 1, 2],
+	[0, 1, 2],
 	[0, 1, 2],
 	[0, 1, 2],
 	[0, 1, 2],
