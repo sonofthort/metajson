@@ -66,7 +66,7 @@ Returns 6.
 
 Arguments can only be expanded within an array.
 
-Syntax to expand arguments is
+Expansion syntax:
 - Optional integer, can be negative. Represents the first index.
 - Followed by two dots: ..
 - Followed by optional integer, can be negative. Represents the last index.
