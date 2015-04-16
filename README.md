@@ -19,15 +19,17 @@ metajson.eval({
 	"templates": {
 		"proclaim": {
 			"__1": "__2",
-			"reason": "__3"
+			// string literals start with `
+			// any other string is a symbol (and error if unknown)
+			"`reason": "__3"
 		}
 	},
 	// Required "result" value. This is what is evaluated to produce the result.
 	"result": [
 		// Invoke a template by making its name the first and only key
 		// of an object whose cooresponding value is an array of arguments
-		{"proclaim": ["bad", "pi", "edible"]},
-		{"proclaim": ["good", "tau", "non-edible"]}
+		{"proclaim": ["`bad", "pi", "`edible"]},
+		{"proclaim": ["`good", "tau", "`non-edible"]}
 	]
 })
 ~~~
@@ -149,10 +151,7 @@ metajson.eval({
 	functions: {
 		// use argument binding functions to create lambdas
 		curry: function(func) {
-			var args = [].slice.call(arguments, 1)
-			return function() {
-				return func.apply(null, args.concat([].slice.call(arguments)))
-			}
+			return func.bind.apply(func, [null].concat([].slice.call(arguments, 1)))
 		},
 		compose: function() {
 			var funcs = [].slice.call(arguments)
