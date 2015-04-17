@@ -122,7 +122,7 @@ metajson.eval({
 This returns 1.
 
 # lambdas
-Anonymous functions can be achieved by using a dictionary with some function binding helpers.
+Anonymous functions can be achieved through a dictionary with some function binding helpers.
 ~~~JavaScript
 metajson.eval({
 	templates: {	
