@@ -166,14 +166,14 @@ metajson.eval({
 				return result
 			}
 		},
-		// need existing library of functions to bind arguments to
+		// some functions with which to bind (templates also can be bound)
 		add: function(a, b) {
 			return a + b
 		},
 		mul: function(a, b) {
 			return a * b
 		},
-		// some predefined algos work well with lambdas also
+		// some predefined algos also work well with lambdas
 		map: function(arr, func) {
 			return arr.map(func)
 		}
