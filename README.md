@@ -64,7 +64,7 @@ Returns 6.
 
 # variadic arguments
 
-Arguments can only be expanded within an array.
+Argument packs can only be expanded within an array.
 
 Expansion syntax:
 - Unsigned or negative integer, the first index.
