@@ -19,17 +19,17 @@ metajson.eval({
 	"templates": {
 		"proclaim": {
 			"__1": "__2",
-			// string literals start with `
+			// string literals start with $
 			// any other string is a symbol (and error if unknown)
-			"`reason": "__3"
+			"$reason": "__3"
 		}
 	},
 	// Required "result" value. This is what is evaluated to produce the result.
 	"result": [
 		// Invoke a template by setting the first and only element of
 		// an object to its name and arguments
-		{"proclaim": ["`bad", "pi", "`edible"]},
-		{"proclaim": ["`good", "tau", "`non-edible"]}
+		{"proclaim": ["$bad", "pi", "$edible"]},
+		{"proclaim": ["$good", "tau", "$non-edible"]}
 	]
 })
 ~~~
