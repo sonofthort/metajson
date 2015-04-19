@@ -240,7 +240,7 @@ metajson.eval = function(obj /*, libraries...*/) {
 	
 	var stringReplace = function(value) {
 		if (util.isString(value)) {
-			util.assert(value.charAt(0) === '`', 'Unmatched symbol: "' + value + '"')
+			util.assert(value.charAt(0) === '$', 'Unmatched symbol: "' + value + '"')
 			return value.substring(1)
 		} else if (util.isArray(value)) {
 			return value.map(stringReplace)

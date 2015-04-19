@@ -65,15 +65,15 @@ metajson.test.equal('basic_example', metajson.eval({
 	"templates": {
 		"proclaim": {
 			"__1": "__2",
-			"`reason": "__3"
+			"$reason": "__3"
 		}
 	},
 	// Required "result" value. This is what is evaluated to produce the result.
 	"result": [
 		// Invoke a template by making its name the first element of an array.
 		// The remaining elements are the arguments to the template.
-		{"proclaim": ["`bad", "pi", "`edible"]},
-		{"proclaim": ["`good", "tau", "`non-edible"]}
+		{"proclaim": ["$bad", "pi", "$edible"]},
+		{"proclaim": ["$good", "tau", "$non-edible"]}
 	]
 }), [
 	{"bad": 3.14159, "reason": "edible"},
@@ -274,3 +274,14 @@ metajson.test.equal('array_helpers', metajson.eval({
 	[0, 1, 2],
 	[0, 1, 2]
 ])
+
+metajson.test.equal('lookup', metajson.eval({
+	data: {
+		pi: 3.14159
+	},
+	result: {lookup: ['$pi']}
+}, {
+	functions: {
+		lookup: function(s) {return s.substring(1)}
+	}
+}), 3.14159)
